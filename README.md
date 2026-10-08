@@ -1,11 +1,29 @@
-# TCS Financial Statements
+# Welcome to your Lovable project
 
-Responsive, scenario-driven financial statements dashboard built from the supplied TCS Excel model.
+This project was built with [Lovable](https://lovable.dev).
 
-## Run locally
+## Build with Lovable
 
-Open `dist/index.html` in a browser, or serve the `dist` directory with any static web server.
+Open your project in the [Lovable editor](https://lovable.dev) and keep building.
 
-## Data
+- **Ship faster**: describe what you want to build and Lovable handles the code.
+- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
+- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
 
-The site uses the workbook's verified FY2018–FY2025 historical series and its Base, Bull, and Bear forecast assumptions for FY2026–FY2028. Values are INR crores except EPS.
+## Development
+
+Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+
+```sh
+git clone <this-repository-url>
+cd <repository-name>
+npm i
+npm run dev
+```
+
+## Built with
+
+- TanStack Start
+- TypeScript
+- React
+- Tailwind CSS
