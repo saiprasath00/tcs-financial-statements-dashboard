@@ -1,9 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import { BALANCE_SHEET_SOURCE, CONSOLIDATED_BALANCE_SHEET } from "@/model/data";
 import { useModel } from "@/model/ModelProvider";
 import { growth } from "@/model/engine";
 import { fmtCr, fmtInr, fmtPct } from "@/model/format";
-import { Delta, Note, PageHeader, Panel, ScenarioBadge, Seg, YearTable } from "@/components/terminal/ui";
+import { GroupedBars } from "@/components/terminal/charts";
+import { Delta, KpiCard, Note, PageHeader, Panel, ScenarioBadge, Seg, YearTable } from "@/components/terminal/ui";
 import { pageMeta } from "@/lib/meta";
 
 export const Route = createFileRoute("/statements")({
@@ -20,6 +22,10 @@ function Statements() {
   const cols = idx.map((i) => all[i]!);
   const prev = (i: number) => (idx[i]! > 0 ? all[idx[i]! - 1]! : null);
   const yoy = (k: "revenue" | "ebitda" | "ebit" | "netProfit" | "eps" | "fcf") => cols.map((r, i) => <Delta key={i} v={prev(i) ? growth(r[k], prev(i)![k]) : null} />);
+  const balanceSheet = CONSOLIDATED_BALANCE_SHEET;
+  const latestBalanceSheet = balanceSheet[balanceSheet.length - 1]!;
+  const priorBalanceSheet = balanceSheet[balanceSheet.length - 2]!;
+  const balanceSheetChart = balanceSheet.map((r) => ({ label: r.year, assets: r.totalAssets, equity: r.totalEquity, liabilities: r.totalAssets - r.totalEquity }));
 
   return (
     <>
@@ -77,28 +83,41 @@ function Statements() {
         </Panel>
       )}
       {tab === "bs" && (
-        <div className="grid gap-4 xl:grid-cols-3">
-          <Panel className="xl:col-span-2" title="Financial position data coverage" subtitle="The supplied workbook does not contain a balance sheet">
-            <div className="-mx-4 overflow-x-auto">
-              <table className="w-full min-w-[580px] text-sm">
-                <thead><tr className="border-b text-left text-[11px] uppercase tracking-wider text-muted-foreground"><th className="px-4 py-2">Balance-sheet line</th><th className="px-4 py-2">Status</th><th className="px-4 py-2">Reason</th></tr></thead>
-                <tbody>
-                  {[["Cash & investments", "Not provided", "No balance-sheet schedule in the workbook"], ["Receivables / working capital", "Not provided", "No working-capital assumptions in the workbook"], ["Property, plant & equipment", "Not provided", "Depreciation and capex are included, but closing asset balances are not"], ["Debt & lease liabilities", "Not provided", "No financing schedule in the workbook"], ["Equity & retained earnings", "Not provided", "No equity roll-forward in the workbook"]].map(([line, status, reason]) => <tr key={line} className="border-b border-border/50"><td className="px-4 py-3 font-medium">{line}</td><td className="px-4 py-3"><span className="rounded-full bg-warning/10 px-2 py-1 text-xs text-warning">{status}</span></td><td className="px-4 py-3 text-muted-foreground">{reason}</td></tr>)}
-                </tbody>
-              </table>
-            </div>
-            <div className="mt-4"><Note tone="warn">A complete balance sheet requires source values for assets, liabilities, and equity. This dashboard does not infer them from income-statement data.</Note></div>
-          </Panel>
-          <Panel title="Available capital signals" subtitle="Workbook-backed indicators">
-            <dl className="space-y-3 text-sm">
-              <div className="flex justify-between gap-3"><dt className="text-muted-foreground">FY25 shares outstanding</dt><dd className="num font-semibold">{fmtCr(model.base.shares)} Cr</dd></div>
-              <div className="flex justify-between gap-3"><dt className="text-muted-foreground">FY25 capex</dt><dd className="num font-semibold">₹{fmtCr(model.base.capex)} Cr</dd></div>
-              <div className="flex justify-between gap-3"><dt className="text-muted-foreground">FY25 free cash flow</dt><dd className="num font-semibold">₹{fmtCr(model.base.fcf)} Cr</dd></div>
-              <div className="flex justify-between gap-3"><dt className="text-muted-foreground">FY28F capex</dt><dd className="num font-semibold">₹{fmtCr(model.end.capex)} Cr</dd></div>
-              <div className="flex justify-between gap-3"><dt className="text-muted-foreground">FY28F free cash flow</dt><dd className="num font-semibold">₹{fmtCr(model.end.fcf)} Cr</dd></div>
-            </dl>
-          </Panel>
-        </div>
+        <>
+          <div className="mb-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <KpiCard label="Total Assets" value={`₹${fmtCr(latestBalanceSheet.totalAssets)}`} unit="Cr" sub="FY2026 actual" delta={growth(latestBalanceSheet.totalAssets, priorBalanceSheet.totalAssets)} deltaLabel="vs FY2025" />
+            <KpiCard label="Total Equity" value={`₹${fmtCr(latestBalanceSheet.totalEquity)}`} unit="Cr" sub="FY2026 actual" delta={growth(latestBalanceSheet.totalEquity, priorBalanceSheet.totalEquity)} deltaLabel="vs FY2025" />
+            <KpiCard label="Cash + Investments" value={`₹${fmtCr(latestBalanceSheet.cashAndEquivalents + latestBalanceSheet.currentInvestments)}`} unit="Cr" sub="₹40,187 Cr liquid assets" delta={growth(latestBalanceSheet.cashAndEquivalents + latestBalanceSheet.currentInvestments, priorBalanceSheet.cashAndEquivalents + priorBalanceSheet.currentInvestments)} deltaLabel="vs FY2025" />
+            <KpiCard label="Total Liabilities" value={`₹${fmtCr(latestBalanceSheet.totalAssets - latestBalanceSheet.totalEquity)}`} unit="Cr" sub="FY2026 actual" delta={growth(latestBalanceSheet.totalAssets - latestBalanceSheet.totalEquity, priorBalanceSheet.totalAssets - priorBalanceSheet.totalEquity)} deltaLabel="vs FY2025" />
+          </div>
+          <div className="grid gap-4 xl:grid-cols-5">
+            <Panel className="xl:col-span-3" title="Consolidated Balance Sheet" subtitle="₹ Crore · 31 March actuals">
+              <YearTable
+                years={balanceSheet.map((r) => r.year)}
+                forecastFlags={balanceSheet.map(() => false)}
+                rows={[
+                  { label: "Non-current assets", values: balanceSheet.map((r) => fmtCr(r.nonCurrentAssets)) },
+                  { label: "Current assets", values: balanceSheet.map((r) => fmtCr(r.currentAssets)) },
+                  { label: "Total assets", values: balanceSheet.map((r) => fmtCr(r.totalAssets)), emphasis: true },
+                  { label: "Cash & cash equivalents", values: balanceSheet.map((r) => fmtCr(r.cashAndEquivalents)), muted: true },
+                  { label: "Current investments", values: balanceSheet.map((r) => fmtCr(r.currentInvestments)), muted: true },
+                  { label: "Billed receivables", values: balanceSheet.map((r) => fmtCr(r.billedReceivables)), muted: true },
+                  { label: "Unbilled receivables", values: balanceSheet.map((r) => fmtCr(r.unbilledReceivables)), muted: true },
+                  { label: "Property, plant & equipment", values: balanceSheet.map((r) => fmtCr(r.propertyPlantEquipment)), muted: true },
+                  { label: "Total equity", values: balanceSheet.map((r) => fmtCr(r.totalEquity)), emphasis: true },
+                  { label: "Non-current liabilities", values: balanceSheet.map((r) => fmtCr(r.nonCurrentLiabilities)) },
+                  { label: "Current liabilities", values: balanceSheet.map((r) => fmtCr(r.currentLiabilities)) },
+                  { label: "Trade payables", values: balanceSheet.map((r) => fmtCr(r.tradePayables)), muted: true },
+                  { label: "Total equity & liabilities", values: balanceSheet.map((r) => fmtCr(r.totalEquity + r.nonCurrentLiabilities + r.currentLiabilities)), emphasis: true },
+                ]}
+              />
+            </Panel>
+            <Panel className="xl:col-span-2" title="Capital structure" subtitle="Actual balance-sheet comparison">
+              <GroupedBars data={balanceSheetChart} format="cr" series={[{ key: "assets", name: "Assets", color: "var(--chart-1)" }, { key: "equity", name: "Equity", color: "var(--chart-2)" }, { key: "liabilities", name: "Liabilities", color: "var(--chart-3)" }]} />
+            </Panel>
+          </div>
+          <div className="mt-4"><Note>Balance-sheet actuals were added from the official <a className="font-medium text-primary underline underline-offset-2" href={BALANCE_SHEET_SOURCE.url} target="_blank" rel="noreferrer">{BALANCE_SHEET_SOURCE.name}</a>. They supplement the workbook and are not used to create FY2026–FY2028 forecast balance-sheet figures.</Note></div>
+        </>
       )}
     </>
   );

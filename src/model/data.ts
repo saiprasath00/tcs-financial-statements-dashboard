@@ -72,8 +72,54 @@ export const SOURCE_DATAPOINTS = [
   { metric: "Employees", value: "6,07,979", note: "Total employee count as of March 2025", source: "1" },
 ];
 
+/**
+ * Consolidated balance-sheet actuals — INR Crore, at 31 March.
+ * These figures supplement the supplied workbook, which has no balance-sheet
+ * schedule. They are intentionally kept outside the forecast engine: no
+ * balance-sheet assumptions were supplied for FY2026–FY2028F.
+ * Source: TCS Annual Report FY2025-26, consolidated balance sheet.
+ */
+export const CONSOLIDATED_BALANCE_SHEET = [
+  {
+    year: "FY2025",
+    nonCurrentAssets: 36618,
+    currentAssets: 123011,
+    totalAssets: 159629,
+    cashAndEquivalents: 8342,
+    currentInvestments: 30689,
+    billedReceivables: 50142,
+    unbilledReceivables: 8904,
+    propertyPlantEquipment: 10978,
+    totalEquity: 95771,
+    nonCurrentLiabilities: 10857,
+    currentLiabilities: 53001,
+    tradePayables: 13909,
+  },
+  {
+    year: "FY2026",
+    nonCurrentAssets: 46667,
+    currentAssets: 135705,
+    totalAssets: 182372,
+    cashAndEquivalents: 6417,
+    currentInvestments: 33770,
+    billedReceivables: 57630,
+    unbilledReceivables: 10084,
+    propertyPlantEquipment: 11032,
+    totalEquity: 108478,
+    nonCurrentLiabilities: 12980,
+    currentLiabilities: 60914,
+    tradePayables: 14808,
+  },
+] as const;
+
+export const BALANCE_SHEET_SOURCE = {
+  name: "TCS Annual Report FY2025-26 — Consolidated Balance Sheet",
+  url: "https://www.tcs.com/content/dam/tcs/investor-relations/financial-statements/2025-26/ar/annual-report-2025-2026.pdf",
+};
+
 /** Sources!B5:G13 */
 export const SOURCES = [
+  { name: "TCS Annual Report FY2025-26", type: "Consolidated balance-sheet actuals", url: "https://www.tcs.com/content/dam/tcs/investor-relations/financial-statements/2025-26/ar/annual-report-2025-2026.pdf", period: "FY2026" },
   { name: "TCS Annual Report FY2024-25", type: "Revenue, Profit, EPS, Employees", url: "https://www.tcs.com/content/dam/tcs/investor-relations/financial-statements/2024-25/ar/annual-report-2024-2025.pdf", period: "FY2025" },
   { name: "TCS Annual Report FY2023-24", type: "Revenue, Profit, EPS, EBITDA", url: "https://www.tcs.com/content/dam/tcs/investor-relations/financial-statements/2023-24/ar/annual-report-2023-2024.pdf", period: "FY2024" },
   { name: "TCS Annual Report FY2022-23", type: "Revenue, Profit, EPS, EBITDA", url: "https://www.tcs.com/content/dam/tcs/investor-relations/financial-statements/2022-23/ar/annual-report-2022-2023.pdf", period: "FY2023" },
