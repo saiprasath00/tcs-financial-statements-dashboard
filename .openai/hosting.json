@@ -1,3 +1,6 @@
 {
+  "static": {
+    "directory": ".output/public"
+  },
   "project_id": "appgprj_6ac7ede6e95081918c4dad2a4e34ed8c"
 }
