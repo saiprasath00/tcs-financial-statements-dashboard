@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useModel } from "@/model/ModelProvider";
 import { SCENARIOS } from "@/model/data";
-import { fmtInr } from "@/model/format";
+import { fmtCr, fmtInr } from "@/model/format";
 import { Note, PageHeader, Panel, scenarioColor } from "@/components/terminal/ui";
 import { GroupedBars } from "@/components/terminal/charts";
 import { pageMeta } from "@/lib/meta";
@@ -14,7 +14,7 @@ export const Route = createFileRoute("/valuation")({
 
 function Valuation() {
   const { byScenario, scenario } = useModel();
-  const [pe, setPe] = useState("");
+  const [pe, setPe] = useState("25");
   const multiple = Number(pe);
   const valid = pe !== "" && Number.isFinite(multiple) && multiple > 0;
 
@@ -42,7 +42,7 @@ function Valuation() {
         </p>
       </Panel>
 
-      <Panel title="Optional: illustrative P/E on model EPS" subtitle="User input — not part of the source model">
+      <Panel title="Illustrative P/E value range" subtitle="Editable assumption · based on the model's forecast EPS">
         <div className="mb-4 flex flex-wrap items-end gap-3">
           <label className="text-xs text-muted-foreground">
             P/E multiple (×)
@@ -54,7 +54,7 @@ function Valuation() {
               className="num mt-1 block h-10 w-40 rounded border border-warning/50 bg-background px-3 text-sm text-warning outline-none focus:ring-1 focus:ring-warning"
             />
           </label>
-          {!valid && <span className="pb-2 text-xs text-muted-foreground">Enter a multiple to compute EPS × P/E. No default is assumed.</span>}
+          <span className="pb-2 text-xs text-muted-foreground">Change the multiple to compare the model's scenario outcomes. This is not a price target.</span>
         </div>
         <div className="-mx-4 overflow-x-auto">
           <table className="w-full min-w-[520px] text-sm">
@@ -80,15 +80,23 @@ function Valuation() {
             </tbody>
           </table>
         </div>
-        {valid && (
-          <div className="mt-4">
-            <GroupedBars format="inr" data={SCENARIOS.map((s) => ({ label: s, value: byScenario[s].end.eps * multiple }))} series={[{ key: "value", name: `FY28 EPS × ${multiple}`, color: "var(--chart-2)" }]} />
-          </div>
-        )}
+        {valid && <div className="mt-4"><GroupedBars format="inr" data={SCENARIOS.map((s) => ({ label: s, value: byScenario[s].end.eps * multiple }))} series={[{ key: "value", name: `FY28 EPS × ${multiple}`, color: "var(--chart-2)" }]} /></div>}
         <div className="mt-3">
           <Note tone="warn">Illustrative only. The multiple is supplied by you and is not a model assumption; the result is not a price target or investment recommendation.</Note>
         </div>
       </Panel>
+
+      <div className="mt-4 grid gap-4 md:grid-cols-3">
+        {SCENARIOS.map((s) => (
+          <Panel key={s} title={`${s} case · FY28F`} subtitle="Forecast outputs from the active model">
+            <dl className="space-y-3 text-sm">
+              <div className="flex justify-between gap-3"><dt className="text-muted-foreground">EPS</dt><dd className="num font-semibold">{fmtInr(byScenario[s].end.eps)}</dd></div>
+              <div className="flex justify-between gap-3"><dt className="text-muted-foreground">Free cash flow</dt><dd className="num font-semibold">₹{fmtCr(byScenario[s].end.fcf)} Cr</dd></div>
+              <div className="flex justify-between gap-3"><dt className="text-muted-foreground">Revenue</dt><dd className="num font-semibold">₹{fmtCr(byScenario[s].end.revenue)} Cr</dd></div>
+            </dl>
+          </Panel>
+        ))}
+      </div>
     </>
   );
 }

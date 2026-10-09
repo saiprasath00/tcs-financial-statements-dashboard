@@ -77,12 +77,28 @@ function Statements() {
         </Panel>
       )}
       {tab === "bs" && (
-        <Panel title="Balance Sheet">
-          <div className="rounded border border-dashed p-8 text-center">
-            <div className="num text-xs uppercase tracking-wider text-warning">Unavailable in source model</div>
-            <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">The uploaded workbook contains no balance sheet items (assets, liabilities, equity, working capital). Nothing is shown to avoid fabricating data.</p>
-          </div>
-        </Panel>
+        <div className="grid gap-4 xl:grid-cols-3">
+          <Panel className="xl:col-span-2" title="Financial position data coverage" subtitle="The supplied workbook does not contain a balance sheet">
+            <div className="-mx-4 overflow-x-auto">
+              <table className="w-full min-w-[580px] text-sm">
+                <thead><tr className="border-b text-left text-[11px] uppercase tracking-wider text-muted-foreground"><th className="px-4 py-2">Balance-sheet line</th><th className="px-4 py-2">Status</th><th className="px-4 py-2">Reason</th></tr></thead>
+                <tbody>
+                  {[["Cash & investments", "Not provided", "No balance-sheet schedule in the workbook"], ["Receivables / working capital", "Not provided", "No working-capital assumptions in the workbook"], ["Property, plant & equipment", "Not provided", "Depreciation and capex are included, but closing asset balances are not"], ["Debt & lease liabilities", "Not provided", "No financing schedule in the workbook"], ["Equity & retained earnings", "Not provided", "No equity roll-forward in the workbook"]].map(([line, status, reason]) => <tr key={line} className="border-b border-border/50"><td className="px-4 py-3 font-medium">{line}</td><td className="px-4 py-3"><span className="rounded-full bg-warning/10 px-2 py-1 text-xs text-warning">{status}</span></td><td className="px-4 py-3 text-muted-foreground">{reason}</td></tr>)}
+                </tbody>
+              </table>
+            </div>
+            <div className="mt-4"><Note tone="warn">A complete balance sheet requires source values for assets, liabilities, and equity. This dashboard does not infer them from income-statement data.</Note></div>
+          </Panel>
+          <Panel title="Available capital signals" subtitle="Workbook-backed indicators">
+            <dl className="space-y-3 text-sm">
+              <div className="flex justify-between gap-3"><dt className="text-muted-foreground">FY25 shares outstanding</dt><dd className="num font-semibold">{fmtCr(model.base.shares)} Cr</dd></div>
+              <div className="flex justify-between gap-3"><dt className="text-muted-foreground">FY25 capex</dt><dd className="num font-semibold">₹{fmtCr(model.base.capex)} Cr</dd></div>
+              <div className="flex justify-between gap-3"><dt className="text-muted-foreground">FY25 free cash flow</dt><dd className="num font-semibold">₹{fmtCr(model.base.fcf)} Cr</dd></div>
+              <div className="flex justify-between gap-3"><dt className="text-muted-foreground">FY28F capex</dt><dd className="num font-semibold">₹{fmtCr(model.end.capex)} Cr</dd></div>
+              <div className="flex justify-between gap-3"><dt className="text-muted-foreground">FY28F free cash flow</dt><dd className="num font-semibold">₹{fmtCr(model.end.fcf)} Cr</dd></div>
+            </dl>
+          </Panel>
+        </div>
       )}
     </>
   );
