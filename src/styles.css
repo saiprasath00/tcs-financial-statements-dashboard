@@ -58,16 +58,16 @@
 
 /* Light investor-relations theme: paper workspace, navy ink, meaning-only colour */
 :root {
-  --radius: 0.2rem;
-  --background: oklch(0.975 0.003 250);
-  --foreground: oklch(0.25 0.035 258);
+  --radius: 0.8rem;
+  --background: #f5f8fc;
+  --foreground: #13233d;
   --panel: oklch(1 0 0);
   --panel-2: oklch(0.965 0.004 250);
   --card: var(--panel);
   --card-foreground: var(--foreground);
   --popover: oklch(1 0 0);
   --popover-foreground: var(--foreground);
-  --primary: oklch(0.36 0.09 258);
+  --primary: #164ea6;
   --primary-foreground: oklch(0.98 0.003 250);
   --secondary: oklch(0.95 0.005 250);
   --secondary-foreground: var(--foreground);
@@ -93,7 +93,7 @@
   --chart-3: oklch(0.55 0.12 155);
   --chart-4: oklch(0.56 0.18 27);
   --chart-5: oklch(0.62 0.02 258);
-  --sidebar: oklch(0.24 0.05 258);
+  --sidebar: #102d5c;
   --sidebar-foreground: oklch(0.96 0.005 250);
   --sidebar-primary: var(--primary);
   --sidebar-primary-foreground: var(--primary-foreground);
@@ -111,7 +111,7 @@
     color-scheme: light;
   }
   body {
-    background-color: var(--color-background);
+    background: radial-gradient(circle at 92% -10%, #dceaff 0, transparent 31rem), var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
@@ -121,3 +121,19 @@
     font-variant-numeric: tabular-nums;
   }
 }
+
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes sheen {
+  0%, 100% { transform: translateX(-110%); }
+  50% { transform: translateX(220%); }
+}
+.page-enter > * { animation: rise-in .55s cubic-bezier(.2,.8,.2,1) both; }
+.page-enter > *:nth-child(2) { animation-delay: .06s; }
+.page-enter > *:nth-child(3) { animation-delay: .12s; }
+.page-enter > *:nth-child(4) { animation-delay: .18s; }
+.dashboard-glow { position: relative; overflow: hidden; }
+.dashboard-glow::after { content: ""; position: absolute; inset: 0; width: 35%; background: linear-gradient(100deg, transparent, rgba(255,255,255,.22), transparent); animation: sheen 7s ease-in-out infinite; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { .page-enter > *, .dashboard-glow::after { animation: none; } }

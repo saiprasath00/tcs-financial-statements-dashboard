@@ -52,10 +52,10 @@ export function PeriodTag({ forecast }: { forecast: boolean }) {
 
 export function PageHeader({ eyebrow, title, children, right }: { eyebrow: string; title: string; children?: ReactNode; right?: ReactNode }) {
   return (
-    <div className="mb-6 flex flex-col gap-3 border-b pb-4 md:flex-row md:items-end md:justify-between">
+    <div className="mb-7 flex flex-col gap-3 rounded-2xl border border-blue-100 bg-white/70 px-5 py-5 shadow-[0_12px_32px_rgba(30,71,130,.07)] md:flex-row md:items-end md:justify-between">
       <div className="max-w-3xl">
         <div className="mb-1 text-[11px] font-medium text-muted-foreground">{eyebrow}</div>
-        <h1 className="text-xl font-semibold tracking-tight text-primary md:text-2xl">{title}</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-primary md:text-3xl">{title}</h1>
         {children && <div className="mt-2 text-sm leading-relaxed text-muted-foreground">{children}</div>}
       </div>
       {right}
@@ -65,7 +65,7 @@ export function PageHeader({ eyebrow, title, children, right }: { eyebrow: strin
 
 export function Panel({ title, subtitle, right, children, className, bodyClass }: { title?: ReactNode; subtitle?: ReactNode; right?: ReactNode; children: ReactNode; className?: string; bodyClass?: string }) {
   return (
-    <section className={cn("min-w-0 rounded-sm border bg-panel", className)}>
+    <section className={cn("min-w-0 rounded-2xl border border-slate-200/80 bg-panel shadow-[0_10px_28px_rgba(31,63,113,.06)] transition-shadow hover:shadow-[0_16px_36px_rgba(31,63,113,.10)]", className)}>
       {(title || right) && (
         <div className="flex flex-wrap items-end justify-between gap-2 border-b px-4 pb-2.5 pt-3">
           <div>
@@ -83,7 +83,7 @@ export function Panel({ title, subtitle, right, children, className, bodyClass }
 export function KpiCard({ label, value, unit, sub, delta, deltaLabel, forecast }: { label: string; value: string; unit?: string; sub?: ReactNode; delta?: number | null; deltaLabel?: string; forecast?: boolean }) {
   const pos = delta != null && delta >= 0;
   return (
-    <div className="min-w-0 rounded-sm border bg-panel px-4 py-3">
+    <div className="min-w-0 rounded-2xl border border-slate-200/80 bg-panel px-4 py-4 shadow-[0_8px_22px_rgba(31,63,113,.05)] transition-transform duration-300 hover:-translate-y-1">
       <div className="flex items-center justify-between gap-2">
         <span className="text-xs text-muted-foreground">{label}</span>
         {forecast != null && <PeriodTag forecast={forecast} />}

@@ -81,7 +81,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen">
-      <header className="bg-sidebar text-sidebar-foreground">
+      <header className="dashboard-glow bg-[linear-gradient(115deg,#08275a,#155eb8_58%,#0f8b9d)] text-sidebar-foreground shadow-[0_8px_30px_rgba(19,61,125,.22)]">
         <div className="mx-auto flex max-w-[1400px] items-center gap-3 px-4 py-3 lg:px-8">
           <button aria-label="Open menu" onClick={() => setOpen(true)} className="grid h-10 w-10 place-items-center rounded-sm border border-sidebar-border lg:hidden">
             <Menu className="h-5 w-5" />
@@ -91,7 +91,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
       </header>
 
-      <div className="sticky top-0 z-40 border-b bg-panel">
+      <div className="sticky top-0 z-40 border-b border-white/70 bg-panel/90 shadow-sm backdrop-blur">
         <div className="mx-auto flex max-w-[1400px] items-center gap-4 px-4 lg:px-8">
           <div className="hidden min-w-0 flex-1 lg:block"><NavList horizontal /></div>
           <div className="flex flex-1 items-center justify-end gap-2 py-2 lg:flex-none">
@@ -123,7 +123,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
       )}
 
-      <main className="mx-auto max-w-[1400px] px-4 py-6 lg:px-8">
+      <main className="page-enter mx-auto max-w-[1400px] px-4 py-8 lg:px-8">
         {unlocked && (
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-sm border border-positive/40 bg-panel px-4 py-3">
             <div className="text-sm">

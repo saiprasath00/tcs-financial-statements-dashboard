@@ -66,13 +66,13 @@ export function TrendChart({ data, series, format = "cr", rightFormat = "pct", h
           />
           {series.map((s) =>
             s.type === "bar" ? (
-              <Bar key={s.key} yAxisId={s.axis ?? "left"} dataKey={s.key} name={s.name} fill={s.color} hide={hidden[s.key]} radius={[2, 2, 0, 0]} maxBarSize={36} isAnimationActive={false}>
+              <Bar key={s.key} yAxisId={s.axis ?? "left"} dataKey={s.key} name={s.name} fill={s.color} hide={hidden[s.key]} radius={[7, 7, 0, 0]} maxBarSize={36} animationDuration={900}>
                 {rows.map((d, i) => (
                   <Cell key={i} fill={s.color} fillOpacity={d.isForecast ? 0.45 : 0.9} stroke={d.isForecast ? s.color : undefined} strokeDasharray={d.isForecast ? "3 2" : undefined} />
                 ))}
               </Bar>
             ) : (
-              <Line key={s.key} yAxisId={s.axis ?? "left"} dataKey={s.key} name={s.name} stroke={s.color} strokeWidth={2} strokeDasharray={s.dashed ? "5 4" : undefined} dot={{ r: 2.5, fill: s.color }} hide={hidden[s.key]} connectNulls isAnimationActive={false} />
+              <Line key={s.key} yAxisId={s.axis ?? "left"} dataKey={s.key} name={s.name} stroke={s.color} strokeWidth={2.5} strokeDasharray={s.dashed ? "5 4" : undefined} dot={{ r: 3, fill: s.color }} hide={hidden[s.key]} connectNulls animationDuration={950} />
             ),
           )}
         </ComposedChart>
@@ -92,7 +92,7 @@ export function GroupedBars({ data, series, format = "cr", height = 260, xKey = 
           <Tooltip content={<TipBox format={format} />} cursor={{ fill: "var(--accent)", fillOpacity: 0.4 }} />
           <Legend wrapperStyle={{ fontSize: 11 }} />
           {series.map((s) => (
-            <Bar key={s.key} dataKey={s.key} name={s.name} fill={s.color} radius={[2, 2, 0, 0]} maxBarSize={40} isAnimationActive={false} />
+            <Bar key={s.key} dataKey={s.key} name={s.name} fill={s.color} radius={[7, 7, 0, 0]} maxBarSize={40} animationDuration={850} />
           ))}
         </BarChart>
       </ResponsiveContainer>
