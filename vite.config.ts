@@ -7,6 +7,11 @@
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 export default defineConfig({
+  vite: {
+    // GitHub Pages serves this project beneath its repository name, while the
+    // companion deployment serves it from the domain root.
+    base: process.env.GITHUB_ACTIONS ? "/tcs-financial-statements-dashboard/" : "/",
+  },
   // GitHub Pages serves static files only. The dashboard has no server-only
   // behavior, so emit a client bundle instead of a Nitro worker.
   nitro: false,
